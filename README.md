@@ -9,6 +9,7 @@ npm install socket.io
 ```
 Then, download openssl for getting certificate
 ###Mac
+https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0
 ###Windows
 Download opsnssl
 http://slproweb.com/products/Win32OpenSSL.html
