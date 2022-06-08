@@ -3,7 +3,10 @@
 在前端使用WebRTC API，通過Node.js及Express，socketIO達成後端Web server 和 Websocket server
 
 First, install node.js
+
 ```
+git clone git@github.com:AlanSheng610/WebRTC-in-local-network.git
+cd WebRTC-in-local-network
 npm install express
 npm install socket.io
 ```
