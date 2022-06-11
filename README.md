@@ -19,7 +19,7 @@ https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0
 Download opsnssl
 http://slproweb.com/products/Win32OpenSSL.html
 Go to the dictionary you installed
-sudo start.bat
+click start.bat as administrator
 ```
 cd C:\
 openssl genrsa -out privkey.key 2048
@@ -36,8 +36,10 @@ let sslOptions = {
 
 ### Run it
 ```
-sudo node index.js
+//Mac os add sudo 
+node index.js
 ```
+
 
 ### Check it on browser
 
