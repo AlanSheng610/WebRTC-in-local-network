@@ -21,24 +21,22 @@
   <canvas id="capture-canvas" style="display: none;"></canvas>
 
   <button id="capture">拍照</button>
-  <!-- <div>
-    <button id="startBtn">開始</button>
-    <button id="leaveBtn">離開</button>
-    <button name="audio" id="audioBtn"></button>
-    <button name="video" id="VideoBtn"></button>
-  </div> -->
 
   <ul id="capture-list"></ul>
-
 
   <div id="videos"></div>
 
   <script src="https://cdn.bootcdn.net/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.js"></script>
+  <!-- 
+  1.camera.js需要在這兩個script後面，否則有error
+  2.在local端camera.js是放在./public/camera.js
+  但由於express的get static file指向public，當run node index.js時
+  ./public就是他的起始路徑
+  所以不需用./public/camera.js 
+  -->
   <script src="./camera.js"></script>
   
 
 </body>
-
-
 </html>
