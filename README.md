@@ -45,11 +45,7 @@ node index.js
 
 open your browser, type 
 ```
-chatting room:
-https://"your ip in local network"
-
-camera room:
-https://"your ip in loacl network"/camera
+https://"your ip in loacl network"
 ```
 
 ### Find IP
