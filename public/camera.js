@@ -1,6 +1,4 @@
-
-//封装一部分函数
-
+//取得用戶的攝影機和麥克風
 function getUserMedia(constrains, success, error) {
     if (navigator.mediaDevices.getUserMedia) {
         //最新標準API
@@ -17,38 +15,38 @@ function getUserMedia(constrains, success, error) {
         promise = navigator.getUserMedia(constrains).then(success).catch(error);
     }
 }
-
 function canGetUserMediaUse() {
     return !!(navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 }
 
 
+
 const localVideoElm = document.getElementById("video-local");
 $('document').ready(() => {
 
-
+    //拍照功能
     $('#capture').click(() => {
         let video = localVideoElm//原生dom
         let isPlaying = !(video.paused || video.ended || video.seeking || video.readyState < video.HAVE_FUTURE_DATA)
 
         if (isPlaying) {
             let canvas = $('#capture-canvas')
-            canvas.attr('width', localVideoElm.clientWidth);//设置canvas的宽度
-            canvas.attr('height', localVideoElm.clientHeight);//设置canvas的高度
+            canvas.attr('width', localVideoElm.clientWidth);//設定canvas的寬度
+            canvas.attr('height', localVideoElm.clientHeight);//設定canvas的高度
 
             let img = $('<img>')
-            img.attr('width', localVideoElm.clientWidth);//设置图像的宽度
-            img.attr('height', localVideoElm.clientHeight);//设置图像的高度
+            img.attr('width', localVideoElm.clientWidth);//设置圖片的寬度
+            img.attr('height', localVideoElm.clientHeight);//设置圖片的高度
 
             //canvas[0] //jQuery对象转dom
             var context = canvas[0].getContext('2d');
-            //在canvas上绘图，其绘图坐标为0,0; 
-            //绘图大小为摄像头内容的宽度，高度（全局绘制，你可以改变这些值试试效果）。
+            //在canvas上畫圖，其畫圖坐标为0,0; 
+            //畫圖大小为攝影機的的寬高。
             context.drawImage(localVideoElm, 0, 0, localVideoElm.clientWidth, localVideoElm.clientHeight);
-            //根据canvas内容进行编码，并赋值到图片上
+            //依據canvas内容進行編碼，轉成圖片
             var data = canvas[0].toDataURL('image/png');
             img.attr('src', data);
-            //插入到id为capture-list的有序列表里
+            //插入到id為capture-list
             $('#capture-list').append($('<li></li>').html(img));
         }
     })
@@ -66,7 +64,6 @@ var pc = [];
 var localStream = null;
 
 function InitCamera() {
-
     if (canGetUserMediaUse()) {
         getUserMedia({
             video: true,
@@ -76,10 +73,10 @@ function InitCamera() {
             localVideoElm.srcObject = stream;
             $(localVideoElm).width(800);
         }, (err) => {
-            console.log('访问用户媒体失败: ', err.name, err.message);
+            console.log('取不到用戶的媒體設備: ', err.name, err.message);
         });
     } else {
-        alert('您的浏览器不兼容');
+        alert('瀏覽器不兼容');
     }
 
 }
@@ -87,16 +84,14 @@ function InitCamera() {
 function StartCall(parterName, createOffer) {
 
     pc[parterName] = new RTCPeerConnection(iceServer);
-
-    //如果已经有本地流，那么直接获取Tracks并调用addTrack添加到RTC对象中。
+    //如果有localStream，直接拿Tracks並使用addTrack加入
     if (localStream) {
-
         localStream.getTracks().forEach((track) => {
             pc[parterName].addTrack(track, localStream);//should trigger negotiationneeded event
         });
 
     } else {
-        //否则需要重新启动摄像头并获取
+        //重新啟動攝影機並取得
         if (canGetUserMediaUse()) {
             getUserMedia({
                 video: true,
@@ -108,22 +103,22 @@ function StartCall(parterName, createOffer) {
                 $(localVideoElm).width(800);
 
             }, function (error) {
-                console.log("访问用户媒体设备失败：", error.name, error.message);
+                console.log("取不到用戶的媒體設備:", error.name, error.message);
             })
-        } else { alert('您的浏览器不兼容'); }
+        } else { alert('瀏覽器不兼容'); }
 
     }
 
-    //如果是呼叫方,那么需要createOffer请求
+    //如果是呼叫方,createOffer請求
     if (createOffer) {
-        //每当WebRTC基础结构需要你重新启动会话协商过程时，都会调用此函数。它的工作是创建和发送一个请求，给被叫方，要求它与我们联系。
+        //是創建和發送一個請求，給被叫方，要求answer
         pc[parterName].onnegotiationneeded = () => {
             //https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createOffer
 
             pc[parterName].createOffer().then((offer) => {
                 return pc[parterName].setLocalDescription(offer);
             }).then(() => {
-                //把发起者的描述信息通过Signal Server发送到接收者
+                //把發起者的描述信息通過Signal Server發送到接收者
                 socket.emit('sdp', {
                     type: 'video-offer',
                     description: pc[parterName].localDescription,
@@ -134,7 +129,7 @@ function StartCall(parterName, createOffer) {
         };
     }
 
-    //当需要你通过信令服务器将一个ICE候选发送给另一个对等端时，本地ICE层将会调用你的 icecandidate 事件处理程序。有关更多信息，请参阅Sending ICE candidates 以查看此示例的代码。
+    //處理icecandidate
     pc[parterName].onicecandidate = ({ candidate }) => {
         socket.emit('ice candidates', {
             candidate: candidate,
@@ -142,8 +137,7 @@ function StartCall(parterName, createOffer) {
             sender: socket.id
         });
     };
-
-    //当向连接中添加磁道时，track 事件的此处理程序由本地WebRTC层调用。例如，可以将传入媒体连接到元素以显示它。详见 Receiving new streams 。
+    //增加track
     pc[parterName].ontrack = (ev) => {
         let str = ev.streams[0];
 
@@ -170,7 +164,7 @@ var socket = io();
 socket.on('connect', () => {
     InitCamera();
 
-    //输出内容 其中 socket.id 是当前socket连接的唯一ID
+    //輸出內容 其中 socket.id 是當前socket連接的唯一ID
     console.log('connect ' + socket.id);
 
     $('#user-id').text(socket.id);
@@ -185,43 +179,41 @@ socket.on('connect', () => {
     socket.on('need connect', (data) => {
 
         console.log(data);
-        //创建新的li并添加到用户列表中
+        //創建新的li並添加到用戶列表中
         let li = $('<li></li>').text(data.sender).attr('user-id', data.sender);
         $('#user-list').append(li);
-        //同时创建一个按钮
+        //創建一個按鈕
         let button = $('<button class="call">通话</button>');
         button.appendTo(li);
-        //监听按钮的点击事件, 这是个demo 需要添加很多东西，比如不能重复拨打已经连接的用户
+        //監聽按鈕的點擊事件, 這是個demo 需要添加很多東西，比如不能重複撥打已經連接的用戶
         $(button).click(function () {
             //$(this).parent().attr('user-id')
             console.log($(this).parent().attr('user-id'));
-            //点击时，开启对该用户的通话
+            //點擊時，開啟對該用戶的通話
             StartCall($(this).parent().attr('user-id'), true);
         });
 
         socket.emit('ok we connect', { receiver: data.sender, sender: socket.id });
     });
-    //某个用户失去连接时，我们需要获取到这个信息
+    //得到用戶失去連接的訊息
     socket.on('user disconnected', (socket_id) => {
         console.log('disconnect : ' + socket_id);
 
         $('#user-list li[user-id="' + socket_id + '"]').remove();
     })
-    //链接吧..
     socket.on('ok we connect', (data) => {
         console.log(data);
 
         $('#user-list').append($('<li></li>').text(data.sender).attr('user-id', data.sender));
-        //这里少了程序，比如之前的按钮啊，按钮的点击监听都没有。
     });
 
-    //监听发送的sdp事件
+    //監聽發送的sdp事件
     socket.on('sdp', (data) => {
-        //如果时offer类型的sdp
+        //如果是offer類型的sdp
         if (data.description.type === 'offer') {
-            //那么被呼叫者需要开启RTC的一套流程，同时不需要createOffer，所以第二个参数为false
+            //那麼被呼叫者需要開啟RTC的一套流程，同時不需要createOffer，所以第二個參數為false
             StartCall(data.sender, false);
-            //把发送者(offer)的描述，存储在接收者的remoteDesc中。
+            //把發送者(offer)的描述，存儲在接收者的remoteDesc中。
             let desc = new RTCSessionDescription(data.description);
             //按1-13流程走的
             pc[data.sender].setRemoteDescription(desc).then(() => {
@@ -240,20 +232,20 @@ socket.on('connect', () => {
 
             })
         } else if (data.description.type === 'answer') {
-            //如果使应答类消息（那么接收到这个事件的是呼叫者）
+            //如果使answer類消息（那麼接收到這個事件的是呼叫者）
             let desc = new RTCSessionDescription(data.description);
             pc[data.sender].setRemoteDescription(desc);
         }
     })
 
-    //如果是ice candidates的协商信息
+    //如果是ice candidates的協商信息
     socket.on('ice candidates', (data) => {
         console.log('ice candidate: ' + data.candidate);
         //{ candidate: candidate, to: partnerName, sender: socketID }
-        //如果ice candidate非空（当candidate为空时，那么本次协商流程到此结束了）
+        //如果ice candidate非空（當candidate為空時，那麼本次協商流程到此結束了）
         if (data.candidate) {
             var candidate = new RTCIceCandidate(data.candidate);
-            //讲对方发来的协商信息保存
+            //講對方發來的協商信息保存
             pc[data.sender].addIceCandidate(candidate).catch();//catch err function empty
         }
     })
