@@ -19,7 +19,7 @@ npm install express
 npm install socket.io
 ```
 #### CA
-Download openssl for getting certificate
+use openssl for getting certificate
 ##### Mac
 tutorial in [medium](https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0)
 
