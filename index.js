@@ -1,12 +1,11 @@
-//@author :  bilibili:一只斌  /   mail: tuduweb@qq.com
 var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 
 var fs = require('fs');
 let sslOptions = {
-    key: fs.readFileSync('localhost.key'),//里面的文件替换成你生成的私钥
-    cert: fs.readFileSync('localhost.crt')//里面的文件替换成你生成的证书
+    key: fs.readFileSync('localhost.key'),//key
+    cert: fs.readFileSync('localhost.crt')//CA
 };
 
 
@@ -17,7 +16,7 @@ var io = require('socket.io')(https);
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+//聊天室
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
   });
@@ -28,14 +27,13 @@ app.get('/camera', (req, res) => {
 
 
 io.on("connection", (socket) => {
-    //连接加入子房间
     socket.join( socket.id );
 
     console.log("a user connected " + socket.id);
 
     socket.on("disconnect", () => {
         console.log("user disconnected: " + socket.id);
-        //某个用户断开连接的时候，我们需要告诉所有还在线的用户这个信息
+        //如果有user斷聯，廣播給其他用戶
         socket.broadcast.emit('user disconnected', socket.id);
     });
 
@@ -44,19 +42,18 @@ io.on("connection", (socket) => {
         //io.emit("chat message", msg);
         socket.broadcast.emit("chat message", msg);
     });
-
-    //当有新用户加入，打招呼时，需要转发消息到所有在线用户。
+    //新user加入，轉發消息給其他用戶
     socket.on('new user greet', (data) => {
         console.log(data);
         console.log(socket.id + ' greet ' + data.msg);
         socket.broadcast.emit('need connect', {sender: socket.id, msg : data.msg});
     });
-    //在线用户回应新用户消息的转发
+    //在線的user回應新user訊息的轉發
     socket.on('ok we connect', (data) => {
         io.to(data.receiver).emit('ok we connect', {sender : data.sender});
     });
 
-    //sdp 消息的转发
+    //sdp 訊息轉發
     socket.on( 'sdp', ( data ) => {
         console.log('sdp');
         console.log(data.description);
@@ -67,7 +64,7 @@ io.on("connection", (socket) => {
         } );
     } );
 
-    //candidates 消息的转发
+    //candidates 訊息轉發
     socket.on( 'ice candidates', ( data ) => {
         console.log('ice candidates:  ');
         console.log(data);
@@ -84,7 +81,3 @@ https.listen(443, () => {
     console.log('https listening on *:443');
 });
 
-// const port = 3000
-// http.listen(port, () => {
-//     console.log("listening on *:", port)
-// })
