@@ -4,6 +4,13 @@
 
 ### Setup
 First, install node.js
+##### Mac
+```
+brew install node.js
+```
+##### Windows
+Download [here](https://nodejs.org/en/) inline link.
+
 ```
 git clone git@github.com:AlanSheng610/WebRTC-in-local-network.git
 cd WebRTC-in-local-network
@@ -13,11 +20,10 @@ npm install socket.io
 #### CA
 Download openssl for getting certificate
 ##### Mac
-https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0
+tutorial in [medium](https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0)
 
 ##### Windows
-Download opsnssl
-http://slproweb.com/products/Win32OpenSSL.html
+Download opsnssl [here](http://slproweb.com/products/Win32OpenSSL.html)
 Go to the dictionary you installed
 click start.bat as administrator
 ```
