@@ -21,9 +21,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
   });
 
-app.get('/camera', (req, res) => {
-    res.sendFile(__dirname + '/camera.html');
-});
 
 
 io.on("connection", (socket) => {
@@ -37,11 +34,11 @@ io.on("connection", (socket) => {
         socket.broadcast.emit('user disconnected', socket.id);
     });
 
-    socket.on("chat message",(msg) => {
-        console.log(socket.id + " say: " + msg);
-        //io.emit("chat message", msg);
-        socket.broadcast.emit("chat message", msg);
-    });
+    // socket.on("chat message",(msg) => {
+    //     console.log(socket.id + " say: " + msg);
+    //     //io.emit("chat message", msg);
+    //     socket.broadcast.emit("chat message", msg);
+    // });
     //新user加入，轉發消息給其他用戶
     socket.on('new user greet', (data) => {
         console.log(data);

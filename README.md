@@ -1,5 +1,5 @@
 # WebRTC-in-local-network
-### The project demo in Cornerstone EECS Design and Implementation(車車課) in 2022 spring
+### The project demo in Cornerstone EECS Design and Implementation (車車課) in 2022 spring
 在前端使用WebRTC API，通過Node.js及Express，socketIO達成後端Web server 和 Websocket server
 
 ### Setup
@@ -11,7 +11,7 @@ npm install express
 npm install socket.io
 ```
 #### CA
-Then, download openssl for getting certificate
+Download openssl for getting certificate
 ##### Mac
 https://manglekuo.medium.com/設定macos本地端https-ssl證書-b2f79bcdedf0
 
