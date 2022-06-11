@@ -16,12 +16,12 @@ var io = require('socket.io')(https);
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
+  
+
 //聊天室
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
   });
-
-
 
 io.on("connection", (socket) => {
     socket.join( socket.id );
