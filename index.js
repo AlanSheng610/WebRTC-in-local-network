@@ -28,23 +28,6 @@ io.on("connection", (socket) => {
 
     console.log("a user connected " + socket.id);
 
-    // socket.on("disconnect", () => {
-    //     console.log("user disconnected: " + socket.id);
-    //     //如果有user斷聯，廣播給其他用戶
-    //     socket.broadcast.emit('user disconnected', socket.id);
-    // });
-
-    // //新user加入，轉發消息給其他用戶
-    // socket.on('new user greet', (data) => {
-    //     console.log(data);
-    //     console.log(socket.id + ' greet ' + data.msg);
-    //     socket.broadcast.emit('need connect', {sender: socket.id, msg : data.msg});
-    // });
-    // //在線的user回應新user訊息的轉發
-    // socket.on('ok we connect', (data) => {
-    //     io.to(data.receiver).emit('ok we connect', {sender : data.sender});
-    // });
-
     //SDP 訊息轉發
     socket.on( 'sdp', ( data ) => {
         console.log('sdp');
