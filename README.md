@@ -9,7 +9,7 @@ First, install node.js
 brew install node.js
 ```
 ##### Windows
-Download [here](https://nodejs.org/en/) inline link.
+Download [here](https://nodejs.org/en/)
 
 #### Download
 ```
